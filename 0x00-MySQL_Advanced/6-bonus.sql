@@ -10,7 +10,7 @@ BEGIN
 
 	IF project_id IS NULL THEN
 		INSERT INTO projects (name) values (project_name);
-		SELECT id INTO project_id FROM projects WHERE name = project_name;
+		project_id = LAST_INSERT_ID();
 	END IF;
 
 	INSERT INTO corrections (user_id, project_id, score)
