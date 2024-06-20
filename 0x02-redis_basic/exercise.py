@@ -19,6 +19,22 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def call_history(method: Callable) -> Callable:
+    """ Wrapper Function """
+    in_key = method.__qualname__ + ":inputs"
+    out_key = method.__qualname__ + ":outputs"
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """ Wrapper Function """
+        self._redis.rpush(in_key, str(args))
+        res = method(self, *args, **kwargs)
+        self._redis.rpush(out_key, str(res))
+        return res
+
+    return wrapper
+
+
 class Cache:
     """
     This class use redis to store data.
