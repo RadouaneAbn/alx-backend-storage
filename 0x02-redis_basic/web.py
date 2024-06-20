@@ -12,7 +12,7 @@ redis_ = redis.Redis()
 def count_requests(method: Callable) -> Callable:
     """ Decortator for counting """
     @wraps(method)
-    def wrapper(url):
+    def wrapper(url: str) -> str:
         """ Wrapper for decorator """
         redis_.incr(f"count:{url}")
         cache = redis_.get(f"cached:{url}")
