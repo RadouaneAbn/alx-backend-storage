@@ -35,6 +35,20 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
+def replay(method: Callable) -> None:
+    """ This function replays the hostory of a function
+    """
+    name = method.__qualname__
+    cache = redis.Redis()
+    calls = cache.get(name).decode("utf-8")
+    print("{} was called {} times:".format(name, calls))
+    inputs = cache.lrange(name + ":inputs", 0, -1)
+    outputs = cache.lrange(name + ":outputs", 0, -1)
+    for input_, output_ in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(name, input_.decode('utf-8'),
+                                     output_.decode('utf-8')))
+
+
 class Cache:
     """
     This class use redis to store data.
